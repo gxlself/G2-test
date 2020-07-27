@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"outDir": "./built",
+		"allowJs": true,
+		"target": "es6",
+		"lib": [
+			"es2017",
+			"dom"
+		],
+		"types": [
+			"node"
+		],
+		"module": "commonjs",
+		"experimentalDecorators": true
+	},
+	"include": [
+		"./src/**/*", "config"
+	]
+  }
+  
