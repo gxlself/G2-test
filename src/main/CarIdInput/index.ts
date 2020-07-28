@@ -1,31 +1,44 @@
-import { getInsertInput, getFragmentDom, getInsertDom } from '../../utils/util';
+import { getInsertInput, getFragmentDom } from '../../utils/util';
 import './index.scss';
 
 interface IOptions {
 	onChange?: (value) => void;
 	onInput?: (value) => void;
+	onEnter?: () => void;
 }
 
 interface IcarInput {
 	inputEl: HTMLElement;
-	init: (option: IOptions) => void;
+	fragEl: DocumentFragment;
+	init: (option: IOptions) => DocumentFragment;
 }
 
 const carInput: IcarInput = {
 	inputEl: getInsertInput(),
-	init(option: IOptions | null = null) {
+	fragEl: getFragmentDom(),
+	init(option: IOptions | null = null): DocumentFragment {
 		const _this = this;
-		_this.el.type = 'text';
+		_this.inputEl.type = 'text';
+		_this.inputEl.placeholder = '请输入SIN号';
 		if (option && option.onChange) {
-			_this.el.addEventListener('change', function() {
+			_this.inputEl.addEventListener('change', function() {
 				option.onChange(this.value)
 			})
 		}
 		if (option && option.onInput) {
-			_this.el.addEventListener('input', function() {
+			_this.inputEl.addEventListener('input', function() {
 				option.onInput(this.value)
 			})
 		}
+		if (option && option.onEnter) {
+			window.addEventListener('keydown', function(e: KeyboardEvent) {
+				if (e.keyCode === 13) {
+					option.onEnter()
+				}
+			})
+		}
+		this.fragEl.appendChild(this.inputEl);
+		return this.fragEl;
 	}
 }
 

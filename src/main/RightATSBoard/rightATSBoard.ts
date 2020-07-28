@@ -1,6 +1,9 @@
 import { Chart, registerComponentController } from '@antv/g2';
 import Slider from '@antv/g2/lib/Chart/controller/slider';
-import { getInsertDom } from '../utils/util';
+import { getInsertDom } from '../../utils/util';
+import CarIdInput from '../CarIdInput';
+import { IBoardData } from '../../interface/ChartData';
+import './index.scss';
 
 // 引入 slider 组件
 registerComponentController('slider', Slider);
@@ -9,7 +12,7 @@ registerComponentController('slider', Slider);
 const ATSBoard: HTMLElement = getInsertDom('ATSBoard');
 
 // BMS ESP ADAS 数据
-const BMS_DCChgPosRelaySta_Data = [
+const BMS_DCChgPosRelaySta_Data: IBoardData[] = [
 	{ time: '02:50:00', value: 0.5 },
 	{ time: '02:50:15', value: 0.5 },
 	{ time: '02:50:30', value: 0.4 },
@@ -47,7 +50,8 @@ const ADAS_APDriverCarSta_Data = [
 ];
 
 // 高度预设置
-const winHeight: number = window.innerHeight;
+const defaultInputHeight: number = 40;
+const winHeight: number = window.innerHeight - defaultInputHeight;
 const offsetTop: number = winHeight * 0.2 + 10;
 
 // ATSBoardChart初始化
@@ -97,8 +101,8 @@ ATSBoardChart.tooltip({
 // BMS视图
 const BMS_View: any = ATSBoardChart.createView({
 	region: {
-		start: { x: 0.07, y: 0.05 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
-		end: { x: 0.95, y: 0.25 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
+		start: { x: 0.07, y: 0.08 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
+		end: { x: 0.95, y: 0.28 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
 	},
 	padding: [5, 5], // 指定视图的留白
 });
@@ -149,8 +153,8 @@ BMS_View.tooltip({
 // ESP视图
 const ESP_View: any = ATSBoardChart.createView({
 	region: {
-		start: { x: 0.07, y: 0.35 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
-		end: { x: 0.95, y: 0.55 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
+		start: { x: 0.07, y: 0.38 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
+		end: { x: 0.95, y: 0.58 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
 	},
 	padding: [5, 5], // 指定视图的留白
 });
@@ -201,8 +205,8 @@ ESP_View.tooltip({
 // ADAS视图
 const ADAS_View: any = ATSBoardChart.createView({
 	region: {
-		start: { x: 0.07, y: 0.65 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
-		end: { x: 0.95, y: 0.95 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
+		start: { x: 0.07, y: 0.68 }, // 指定该视图绘制的起始位置，x y 为 [0 - 1] 范围的数据
+		end: { x: 0.95, y: 0.98 }, // 指定该视图绘制的结束位置，x y 为 [0 - 1] 范围的数据
 	},
 	padding: [0, 5, 100], // 指定视图的留白
 });
@@ -292,6 +296,38 @@ leftSign.addEventListener('click', () => {
 	ATSBoard.classList.toggle('slide-in')
 });
 ATSBoard.appendChild(leftSign);
+
+
+// 获取随机的数据
+function getRandomData(dataList: IBoardData[] = [], jumpNum: number = 0): IBoardData[] {
+	return dataList.map((item: IBoardData) => {
+		const randomNum: number = Math.random() * jumpNum;
+		const isAdd: boolean = randomNum > 1;
+		const newItem: IBoardData = {
+			time: item.time,
+			value: item.value + (isAdd ? 1 : -1) * randomNum
+		}
+		return newItem;
+	});
+}
+
+// 模拟输入sin号进行修改数据
+function searchSINNumber() {
+	const Random_BMS_Data = getRandomData(BMS_DCChgPosRelaySta_Data, 0.1);
+	const Random_ESP_Data = getRandomData(ESP_VehicleSpeed_Data, 0.02);
+	const Random_ADAS_Data = getRandomData(ADAS_APDriverCarSta_Data, 0.2);
+
+	BMS_View.changeData(Random_BMS_Data);
+	ESP_View.changeData(Random_ESP_Data);
+	ADAS_View.changeData(Random_ADAS_Data);
+}
+
+
+// 输入框初始化
+const inputFrag: DocumentFragment = CarIdInput.init({
+	onEnter: searchSINNumber
+});
+ATSBoard.appendChild(inputFrag);
 
 export {
 	ATSBoardChart

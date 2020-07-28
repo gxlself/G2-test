@@ -1,29 +1,4 @@
 html, body {
 	margin: 0;
-}
-
-#ATSBoard{
-	position: absolute;
-	right: 0;
-	top: 0;
-	transform: translate3d(100%, 0, 0);
-	transition: .3s ease;
-	background: rgba(7, 118, 200, 0.3);
-	&.slide-in{
-		transform: translate3d(0, 0, 0);
-	}
-	#left-sign{
-		padding: 1em .5em;
-		width: 2em;
-		box-sizing: border-box;
-		white-space: wrap;
-		border-radius: 5px 0 0 5px;
-		position: absolute;
-		left: -2em;
-		top: 50%;
-		transform: translateY(-50%);
-		color: #ffffff;
-		background: rgba(7, 118, 200, 0.3);
-		cursor: pointer;
-	}
+	overflow: hidden;
 }
